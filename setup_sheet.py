@@ -37,4 +37,5 @@ def setup_sheet(spreadsheet_name):
 
 
 if __name__ == "__main__":
-    setup_sheet("StempsManagement")
+    # setup_sheet("StempsManagement")
+    setup_sheet("738203440")

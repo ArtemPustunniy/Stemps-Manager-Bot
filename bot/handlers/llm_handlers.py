@@ -8,10 +8,25 @@ from bot.utils.role_manager import role_manager
 
 async def llm_add(update: Update, context: CallbackContext) -> int:
     user_id = update.effective_user.id
+    if not role_manager.is_active(user_id):
+        await update.message.reply_text("Бот отключён для вас. Включите его командой /start_work_day.")
+        return ConversationHandler.END
+
     if not (role_manager.is_director(user_id) or role_manager.is_manager(user_id)):
         await update.message.reply_text("У вас нет прав для добавления записей через AI.")
         return ConversationHandler.END
 
+    # Определяем таблицу в зависимости от роли
+    if role_manager.is_manager(user_id):
+        spreadsheet_name = str(user_id)
+    elif role_manager.is_director(user_id) and context.args:
+        spreadsheet_name = context.args[0]
+    else:
+        await update.message.reply_text("Директор, укажите ID менеджера: /ai_assistent <telegram_id>")
+        return ConversationHandler.END
+
+    context.user_data["spreadsheet_name"] = spreadsheet_name
+    context.user_data["manager_id"] = user_id if role_manager.is_manager(user_id) else int(spreadsheet_name)
     await update.message.reply_text("Отправьте текстовую инструкцию для добавления в таблицу:")
     return LLM_ADD
 
@@ -24,6 +39,6 @@ async def process_llm_instruction(update: Update, context: CallbackContext) -> i
         await update.message.reply_text("Не удалось распознать инструкцию. Попробуйте еще раз.")
         return LLM_ADD
 
-    results = [await execute_command(cmd) for cmd in commands]
+    results = [await execute_command(cmd, context.user_data["spreadsheet_name"], context.user_data["manager_id"]) for cmd in commands]
     await update.message.reply_text("\n".join(results))
     return ConversationHandler.END

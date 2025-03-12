@@ -1,11 +1,16 @@
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler
 from bot.utils.role_manager import role_manager
+from bot.utils.stats_manager import stats_manager
 from bot.config.settings import ROLES
 
 
 async def manage_users(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
+    if not role_manager.is_active(user_id):
+        await update.message.reply_text("Бот отключён для вас. Включите его командой /start_work_day.")
+        return
+
     if not role_manager.is_director(user_id):
         await update.message.reply_text("Эта команда доступна только директору.")
         return
@@ -28,5 +33,41 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("Telegram ID должен быть числом.")
 
 
+async def stats(update: Update, context: CallbackContext) -> None:
+    user_id = update.effective_user.id
+    if not role_manager.is_active(user_id):
+        await update.message.reply_text("Бот отключён для вас. Включите его командой /start_work_day.")
+        return
+
+    if not role_manager.is_director(user_id):
+        await update.message.reply_text("Эта команда доступна только директору.")
+        return
+
+    try:
+        args = context.args
+        if len(args) != 1:
+            await update.message.reply_text("Использование: /stats <telegram_id>")
+            return
+
+        manager_id = int(args[0])
+        if not role_manager.is_manager(manager_id):
+            await update.message.reply_text(f"Пользователь {manager_id} не является менеджером.")
+            return
+
+        orders = stats_manager.get_manager_stats(manager_id)
+        if not orders:
+            await update.message.reply_text(f"Менеджер {manager_id} пока не закрыл ни одного заказа.")
+            return
+
+        response = f"Статистика менеджера {manager_id}:\n"
+        for order in orders:
+            client_name, course, contract_amount, timestamp = order
+            response += f"- {client_name} | {course} | {contract_amount} | {timestamp}\n"
+        await update.message.reply_text(response)
+    except ValueError:
+        await update.message.reply_text("Telegram ID должен быть числом.")
+
+
 def setup_handlers(application):
     application.add_handler(CommandHandler("manage_users", manage_users))
+    application.add_handler(CommandHandler("stats", stats))

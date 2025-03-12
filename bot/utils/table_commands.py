@@ -1,5 +1,6 @@
 from typing import Dict
 from google_sheets.manager import GoogleSheetManager
+from bot.utils.stats_manager import stats_manager
 
 
 class TableCommands:
@@ -8,8 +9,8 @@ class TableCommands:
     DELETE_ROW = "delete_row"
 
 
-async def execute_command(command: Dict) -> str:
-    sheet_manager = GoogleSheetManager("StempsManagement")
+async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int) -> str:
+    sheet_manager = GoogleSheetManager(spreadsheet_name)
 
     try:
         cmd = command.get("command")
@@ -24,31 +25,50 @@ async def execute_command(command: Dict) -> str:
                 params.get("Подтверждён ли заказ?", "")
             ]
             sheet_manager.add_row(row_data)
+            # Если заказ подтверждён при добавлении
+            if params.get("Подтверждён ли заказ?", "").lower() == "да":
+                stats_manager.add_closed_order(
+                    manager_id=manager_id,
+                    client_name=row_data[0],
+                    course=row_data[1],
+                    contract_amount=row_data[2]
+                )
+                return f"✅ Добавлена строка: {row_data}\n✅ Заказ подтверждён и добавлен в статистику!"
             return f"✅ Добавлена строка: {row_data}"
 
         elif cmd == TableCommands.UPDATE_CELL:
             client = params.get("клиент", "")
             column = params.get("столбец", "")
-            value = params.get("значение", "")  # Новое значение из параметров
+            value = params.get("значение", "")
 
-            # Ищем строку по клиенту
             row_index = sheet_manager.find_row(client)
             if not row_index:
                 return f"❌ Клиент {client} не найден"
 
-            # Определяем индекс столбца
             column_index = {"курс": 2, "сумма": 3, "статус оплаты": 4, "Подтверждён ли заказ?": 5}.get(column)
             if not column_index:
                 return f"❌ Неизвестный столбец: {column}"
 
+            # Проверяем, было ли значение "Да" раньше
+            old_value = sheet_manager.read_cell(row_index, column_index)
             sheet_manager.update_cell(row_index, column_index, value)
+
+            # Если обновляем "Подтверждён ли заказ?" на "Да" и ранее оно не было "Да"
+            if column == "Подтверждён ли заказ?" and value.lower() == "да" and old_value.lower() != "да":
+                row_data = sheet_manager.sheet.row_values(row_index)
+                stats_manager.add_closed_order(
+                    manager_id=manager_id,
+                    client_name=row_data[0],
+                    course=row_data[1],
+                    contract_amount=row_data[2]
+                )
+                return f"✅ Обновлена ячейка ({row_index}, {column}) для клиента {client}: {value}\n✅ Заказ подтверждён и добавлен в статистику!"
             return f"✅ Обновлена ячейка ({row_index}, {column}) для клиента {client}: {value}"
 
         elif cmd == TableCommands.DELETE_ROW:
             client = params.get("клиент", "")
             course = params.get("курс", "")
 
-            # Ищем строку по клиенту и курсу
             row_index = sheet_manager.find_row(client, course)
             if not row_index:
                 return f"❌ Клиент {client} с курсом {course} не найден"
