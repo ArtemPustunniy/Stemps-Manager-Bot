@@ -82,7 +82,8 @@ async def get_plan(update: Update, context: CallbackContext) -> int:
             "Подтверждён ли заказ?": new_row[4]
         }},
         context.user_data["spreadsheet_name"],
-        context.user_data["manager_id"]
+        context.user_data["manager_id"],
+        bot=context.bot  # Передаём объект bot
     )
     await update.message.reply_text(result)
     return ConversationHandler.END

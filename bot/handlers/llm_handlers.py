@@ -39,6 +39,6 @@ async def process_llm_instruction(update: Update, context: CallbackContext) -> i
         await update.message.reply_text("Не удалось распознать инструкцию. Попробуйте еще раз.")
         return LLM_ADD
 
-    results = [await execute_command(cmd, context.user_data["spreadsheet_name"], context.user_data["manager_id"]) for cmd in commands]
+    results = [await execute_command(cmd, context.user_data["spreadsheet_name"], context.user_data["manager_id"], bot=context.bot) for cmd in commands]
     await update.message.reply_text("\n".join(results))
     return ConversationHandler.END

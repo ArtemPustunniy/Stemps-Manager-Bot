@@ -1,7 +1,8 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler, CallbackContext
 from bot.config.settings import TOKEN, CLIENT_NAME, COURSE, CONTRACT_AMOUNT, PAYMENT_STATUS, PLAN, LLM_ADD
-from bot.handlers.basic_handlers import start, help_command, myid, start_work_day, finish_work_day
+from bot.handlers.basic_handlers import start, help_command, myid, start_work_day, finish_work_day, process_feedback, \
+    cancel_feedback, FEEDBACK
 from bot.handlers.add_handlers import add, get_client_name, get_course, get_contract_amount, get_payment_status, get_plan, cancel
 from bot.handlers.llm_handlers import llm_add, process_llm_instruction
 from bot.handlers.admin_handlers import setup_handlers as setup_admin_handlers
@@ -45,7 +46,16 @@ def main():
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("myid", myid))
     app.add_handler(CommandHandler("start_work_day", start_work_day))
-    app.add_handler(CommandHandler("finish_work_day", finish_work_day))
+
+    # Обработчик завершения рабочего дня с фидбеком
+    finish_handler = ConversationHandler(
+        entry_points=[CommandHandler("finish_work_day", finish_work_day)],
+        states={
+            FEEDBACK: [MessageHandler(filters.TEXT & ~filters.COMMAND, process_feedback)],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_feedback)],
+    )
+    app.add_handler(finish_handler)
 
     # Команды для администратора
     setup_admin_handlers(app)
