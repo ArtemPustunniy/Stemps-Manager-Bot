@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class StatsManager:
@@ -44,6 +44,38 @@ class StatsManager:
                 WHERE manager_id = ?
                 ORDER BY timestamp DESC
             """, (manager_id,))
+            return cursor.fetchall()
+
+    def get_yesterday_stats(self, manager_id: int) -> list:
+        """Получение статистики за вчера для менеджера."""
+        yesterday = (datetime.now() - timedelta(days=1)).date()
+        start_of_day = datetime.combine(yesterday, datetime.min.time()).isoformat()
+        end_of_day = datetime.combine(yesterday, datetime.max.time()).isoformat()
+
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT client_name, course, contract_amount, timestamp
+                FROM closed_orders
+                WHERE manager_id = ? AND timestamp BETWEEN ? AND ?
+                ORDER BY timestamp DESC
+            """, (manager_id, start_of_day, end_of_day))
+            return cursor.fetchall()
+
+    def get_today_stats(self, manager_id: int) -> list:
+        """Получение статистики за сегодня для менеджера."""
+        today = datetime.now().date()
+        start_of_day = datetime.combine(today, datetime.min.time()).isoformat()
+        end_of_day = datetime.combine(today, datetime.max.time()).isoformat()
+
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT client_name, course, contract_amount, timestamp
+                FROM closed_orders
+                WHERE manager_id = ? AND timestamp BETWEEN ? AND ?
+                ORDER BY timestamp DESC
+            """, (manager_id, start_of_day, end_of_day))
             return cursor.fetchall()
 
 
