@@ -1,8 +1,10 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler, CallbackContext
 from bot.config.settings import TOKEN, CLIENT_NAME, COURSE, CONTRACT_AMOUNT, PAYMENT_STATUS, PLAN, LLM_ADD
-from bot.handlers.basic_handlers import start, help_command, myid, start_work_day, finish_work_day, process_feedback, \
-    cancel_feedback, FEEDBACK
+from bot.handlers.basic_handlers import (
+    start, help_command, myid, start_work_day, process_new_tasks, finish_work_day,
+    process_feedback, cancel_feedback, FEEDBACK, ADD_TASKS
+)
 from bot.handlers.add_handlers import add, get_client_name, get_course, get_contract_amount, get_payment_status, get_plan, cancel
 from bot.handlers.llm_handlers import llm_add, process_llm_instruction
 from bot.handlers.admin_handlers import setup_handlers as setup_admin_handlers
@@ -45,9 +47,18 @@ def main():
     app.add_handler(CommandHandler("start", check_first_director))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("myid", myid))
-    app.add_handler(CommandHandler("start_work_day", start_work_day))
 
-    # Обработчик завершения рабочего дня с фидбеком
+    # ConversationHandler для start_work_day с добавлением задач
+    start_work_handler = ConversationHandler(
+        entry_points=[CommandHandler("start_work_day", start_work_day)],
+        states={
+            ADD_TASKS: [MessageHandler(filters.TEXT & ~filters.COMMAND, process_new_tasks)],
+        },
+        fallbacks=[CommandHandler("cancel", cancel_feedback)],
+    )
+    app.add_handler(start_work_handler)
+
+    # ConversationHandler для finish_work_day с фидбеком
     finish_handler = ConversationHandler(
         entry_points=[CommandHandler("finish_work_day", finish_work_day)],
         states={
@@ -76,10 +87,10 @@ def main():
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
-
     app.add_handler(conv_handler)
+
     print("🤖 Бот запущен!")
-    app.run_polling()
+    app.run_polling(timeout=5)
 
 
 if __name__ == "__main__":
