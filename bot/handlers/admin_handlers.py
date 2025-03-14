@@ -68,6 +68,38 @@ async def stats(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("Telegram ID должен быть числом.")
 
 
+async def today_revenue(update: Update, context: CallbackContext) -> None:
+    """
+    Выводит суммарную выручку каждого менеджера за сегодня (подтверждённые заказы).
+    Доступно только директору.
+    """
+    user_id = update.effective_user.id
+    if not role_manager.is_active(user_id):
+        await update.message.reply_text("Бот отключён для вас. Включите его командой /start_work_day.")
+        return
+
+    if not role_manager.is_director(user_id):
+        await update.message.reply_text("Эта команда доступна только директору.")
+        return
+
+    # Получаем выручку за сегодня для всех менеджеров
+    revenue_data = stats_manager.get_today_revenue_by_managers()
+
+    if not revenue_data:
+        await update.message.reply_text("Сегодня ни один менеджер не закрыл заказов.")
+        return
+
+    response = "Выручка менеджеров за сегодня:\n"
+    total_revenue = 0.0
+    for manager_id, revenue in revenue_data.items():
+        response += f"- Менеджер {manager_id}: {revenue:.2f}\n"
+        total_revenue += revenue
+
+    response += f"\nОбщая выручка за сегодня: {total_revenue:.2f}"
+    await update.message.reply_text(response)
+
+
 def setup_handlers(application):
     application.add_handler(CommandHandler("manage_users", manage_users))
     application.add_handler(CommandHandler("stats", stats))
+    application.add_handler(CommandHandler("today_revenue", today_revenue))

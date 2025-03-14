@@ -30,7 +30,8 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                 params.get("курс", ""),
                 params.get("сумма", ""),
                 params.get("статус оплаты", ""),
-                params.get("Подтверждён ли заказ?", "")
+                params.get("Подтверждён ли заказ?", ""),
+                "bot"
             ]
             logging.info(f"Добавление строки: {row_data}")
             sheet_manager.add_row(row_data)

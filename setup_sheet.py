@@ -26,11 +26,12 @@ def setup_sheet(spreadsheet_name):
         "Сумма договора для оплаты (ждёт подтверждения)",
         "Статус оплаты",
         "Подтверждён ли заказ?",
+        "Автор изменений",
     ]
 
     existing_headers = sheet.row_values(1)
     if existing_headers != HEADERS:
-        sheet.update("A1:E1", [HEADERS])
+        sheet.update("A1:F1", [HEADERS])
         print("✅ Заголовки установлены.")
     else:
         print("⚠️ Заголовки уже существуют.")

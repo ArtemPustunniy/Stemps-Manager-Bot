@@ -79,7 +79,8 @@ async def get_plan(update: Update, context: CallbackContext) -> int:
             "курс": new_row[1],
             "сумма": new_row[2],
             "статус оплаты": new_row[3],
-            "Подтверждён ли заказ?": new_row[4]
+            "Подтверждён ли заказ?": new_row[4],
+            "Автор изменений": "bot"
         }},
         context.user_data["spreadsheet_name"],
         context.user_data["manager_id"],

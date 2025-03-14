@@ -90,7 +90,7 @@ def main():
     app.add_handler(conv_handler)
 
     print("🤖 Бот запущен!")
-    app.run_polling(timeout=5)
+    app.run_polling(timeout=10)
 
 
 if __name__ == "__main__":

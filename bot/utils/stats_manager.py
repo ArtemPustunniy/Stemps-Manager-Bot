@@ -78,6 +78,38 @@ class StatsManager:
             """, (manager_id, start_of_day, end_of_day))
             return cursor.fetchall()
 
+    def get_today_revenue_by_managers(self) -> dict:
+        """
+        Подсчитывает суммарную выручку (contract_amount) за сегодня для каждого менеджера.
+        Возвращает словарь {manager_id: total_revenue}.
+        """
+        today = datetime.now().date()
+        start_of_day = datetime.combine(today, datetime.min.time()).isoformat()
+        end_of_day = datetime.combine(today, datetime.max.time()).isoformat()
+
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            # Получаем список всех менеджеров из closed_orders за сегодня
+            cursor.execute("""
+                SELECT DISTINCT manager_id
+                FROM closed_orders
+                WHERE timestamp BETWEEN ? AND ?
+            """, (start_of_day, end_of_day))
+            manager_ids = [row[0] for row in cursor.fetchall()]
+
+            revenue_by_manager = {}
+            for manager_id in manager_ids:
+                cursor.execute("""
+                    SELECT contract_amount
+                    FROM closed_orders
+                    WHERE manager_id = ? AND timestamp BETWEEN ? AND ?
+                """, (manager_id, start_of_day, end_of_day))
+                amounts = [float(row[0]) for row in cursor.fetchall() if row[0] and row[0].replace('.', '', 1).isdigit()]
+                total_revenue = sum(amounts) if amounts else 0.0
+                revenue_by_manager[manager_id] = total_revenue
+
+            return revenue_by_manager
+
 
 # Глобальный экземпляр
 stats_manager = StatsManager()
