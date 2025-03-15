@@ -40,45 +40,67 @@ async def start(update: Update, context: CallbackContext) -> None:
 async def help_command(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
     if not role_manager.is_active(user_id):
-        await update.message.reply_text("Бот отключён для вас. Включите его командой /start_work_day.")
+        await update.message.reply_text(
+            "⚠️ *Бот отключён для вас\\. Включите его командой* `/start_work_day`\\.",
+            parse_mode="MarkdownV2"
+        )
         return
 
     role = role_manager.get_role(user_id)
     if role_manager.is_director(user_id):
         help_text = (
-            "Доступные команды для директора:\n"
-            "/start - Начать работу с ботом\n"
-            "/help - Показать список команд\n"
-            "/add - Пошаговое добавление записи\n"
-            "/ai_assistent - Добавление через текстовую инструкцию\n"
-            "/manage_users - Управление пользователями\n"
-            "/stats - Посмотреть статистику менеджера\n"
-            "/today_revenue - Статистика всех менеджеров\n"
-            "/myid - Узнать свой Telegram ID\n"
-            "/start_work_day - Включить бота\n"
-            "/finish_work_day - Отключить бота\n"
-            "/cancel - Отменить текущую операцию"
+            "👑 *Команды для директора*\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📋 *Основные команды:*\n"
+            "• `/start` — Начать работу с ботом\n"
+            "• `/help` — Показать список команд\n"
+            "• `/myid` — Узнать свой Telegram ID\n"
+            "• `/start_work_day` — Включить бота\n"
+            "• `/finish_work_day` — Отключить бота\n"
+            "• `/cancel` — Отменить текущую операцию\n"
+            "\n📝 *Добавление записей:*\n"
+            "• `/add` — Пошаговое добавление записи\n"
+            "• `/ai_assistent` — Добавление через текстовую инструкцию\n"
+            "\n📊 *Управление и статистика:*\n"
+            "• `/manage_users` — Управление пользователями\n"
+            "• `/stats` — Посмотреть статистику менеджера\n"
+            "• `/today_revenue` — Статистика всех менеджеров\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 Используйте команды для эффективной работы\\!"
         )
     elif role_manager.is_manager(user_id):
         help_text = (
-            "Доступные команды для менеджера:\n"
-            "/start - Начать работу с ботом\n"
-            "/help - Показать список команд\n"
-            "/add - Пошаговое добавление записи\n"
-            "/ai_assistent - Добавление через текстовую инструкцию\n"
-            "/myid - Узнать свой Telegram ID\n"
-            "/start_work_day - Включить бота\n"
-            "/finish_work_day - Отключить бота\n"
-            "/cancel - Отменить текущую операцию"
+            "🧑‍💼 *Команды для менеджера*\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📋 *Основные команды:*\n"
+            "• `/start` — Начать работу с ботом\n"
+            "• `/help` — Показать список команд\n"
+            "• `/myid` — Узнать свой Telegram ID\n"
+            "• `/start_work_day` — Включить бота\n"
+            "• `/finish_work_day` — Отключить бота\n"
+            "• `/cancel` — Отменить текущую операцию\n"
+            "\n📝 *Добавление записей:*\n"
+            "• `/add` — Пошаговое добавление записи\n"
+            "• `/ai_assistent` — Добавление через текстовую инструкцию\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 Выполняйте задачи и закрывайте заказы\\!"
         )
     else:
         help_text = (
-            "Вы не зарегистрированы. Обратитесь к директору.\n"
-            "/myid - Узнать свой Telegram ID\n"
-            "/start_work_day - Включить бота (после регистрации)"
+            "🚫 *Вы не зарегистрированы*\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "Обратитесь к директору для регистрации\\.\n"
+            "📋 *Доступные команды:*\n"
+            "• `/myid` — Узнать свой Telegram ID\n"
+            "• `/start_work_day` — Включить бота \\(после регистрации\\)\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📞 Свяжитесь с директором для доступа\\!"
         )
 
-    await update.message.reply_text(help_text)
+    await update.message.reply_text(
+        help_text,
+        parse_mode="MarkdownV2"
+    )
 
 
 async def myid(update: Update, context: CallbackContext) -> None:
@@ -92,10 +114,15 @@ async def end_of_day_reminder(context: CallbackContext) -> None:
         await context.bot.send_message(
             chat_id=user_id,
             text=(
-                "⏰ До конца рабочего дня осталось 15 минут (19:00 МСК)! "
-                "Пора подвести итоги и подготовить отчёт. "
-                "Используйте /finish_work_day, чтобы завершить день и оставить фидбек."
-            )
+                "⏰ <b>Напоминание: до конца рабочего дня 15 минут!</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                "🕖 Текущее время: 19:00 МСК\n"
+                "📋 Пора подвести итоги и подготовить отчёт.\n"
+                "👉 Используйте команду <code>/finish_work_day</code>, чтобы завершить день и оставить фидбек.\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                "💡 Не забудьте завершить все задачи!"
+            ),
+            parse_mode="HTML"
         )
 
 
@@ -125,31 +152,38 @@ async def start_work_day(update: Update, context: CallbackContext) -> int:
     context.user_data["manager_id"] = manager_id
     context.user_data["spreadsheet_name"] = spreadsheet_name
 
+    if role_manager.is_director(user_id):
+        await update.message.reply_text(
+            "👑 <b>Приветствую вас, директор!</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "🌟 Удачного рабочего дня!\n",
+            parse_mode="HTML"
+        )
+        return ConversationHandler.END
+
     yesterday_stats = stats_manager.get_yesterday_stats(manager_id)
     if not yesterday_stats:
-        stats_text = "За вчера вы не закрыли ни одного заказа."
+        stats_text = "📊 <b>Статистика за вчера:</b>\nЗа вчера вы не закрыли ни одного заказа."
     else:
-        stats_text = "Статистика закрытых заказов за вчера:\n"
+        stats_text = "📊 <b>Статистика закрытых заказов за вчера:</b>\n"
         for stat in yesterday_stats:
             client_name, course, contract_amount, timestamp = stat
-            stats_text += f"- {client_name} | {course} | {contract_amount} | {timestamp}\n"
+            stats_text += f"• {client_name} | {course} | {contract_amount} | {timestamp}\n"
 
     sheet_manager = GoogleSheetManager(spreadsheet_name)
     all_rows = sheet_manager.sheet.get_all_values()[1:]
-    # Учитываем, что строка может иметь 5 или 6 элементов (с "Автор изменений" или без)
     unclosed_tasks = [row for row in all_rows if len(row) >= 5 and row[4].lower() == "нет"]
 
     if not unclosed_tasks:
-        unclosed_text = "Незакрытых задач с вчера нет."
+        unclosed_text = "✅ <b>Незакрытые задачи:</b>\nНезакрытых задач с вчера нет."
     else:
-        unclosed_text = "Незакрытые задачи с вчера (нужно завершить):\n"
+        unclosed_text = "✅ <b>Незакрытые задачи с вчера (нужно завершить):</b>\n"
         for task in unclosed_tasks:
-            # Извлекаем данные с учётом возможного отсутствия "Автор изменений"
             client_name = task[0] if len(task) > 0 else "Не указано"
             course = task[1] if len(task) > 1 else "Не указано"
             contract_amount = task[2] if len(task) > 2 else "Не указано"
             payment_status = task[3] if len(task) > 3 else "Не указано"
-            unclosed_text += f"- {client_name} | {course} | {contract_amount} | Оплата: {payment_status}\n"
+            unclosed_text += f"• {client_name} | {course} | {contract_amount} | Оплата: {payment_status}\n"
 
     completed_count = len(yesterday_stats)
     unclosed_count = len(unclosed_tasks)
@@ -167,7 +201,7 @@ async def start_work_day(update: Update, context: CallbackContext) -> int:
                 temperature=0.2
             )
             ai_response = response.choices[0].message.content.strip()
-            motivation_text = f"\n{ai_response}\n"
+            motivation_text = f"\n🎉 <b>Мотивация:</b>\n{ai_response}\n"
         elif unclosed_ratio == 0:
             prompt = "Сгенерируй короткое креативное поощряющее сообщение для сотрудника, который вчера выполнил вообще все задачи."
             response = await openai_client.chat.completions.create(
@@ -177,10 +211,11 @@ async def start_work_day(update: Update, context: CallbackContext) -> int:
                 temperature=0.2
             )
             ai_response = response.choices[0].message.content.strip()
-            motivation_text = f"\n{ai_response}\n"
+            motivation_text = f"\n🎉 <b>Мотивация:</b>\n{ai_response}\n"
         elif unclosed_ratio > 0.1:
             motivation_text = (
-                "\nСегодня твой день, чтобы сиять! Осталось немного задач с вчера — "
+                "\n🎉 <b>Мотивация:</b>\n"
+                "Сегодня твой день, чтобы сиять! Осталось немного задач с вчера — "
                 "вперёд к новым вершинам, ты всё сможешь!\n"
             )
 
@@ -191,7 +226,7 @@ async def start_work_day(update: Update, context: CallbackContext) -> int:
 
     # Планируем ежедневное напоминание на 19:34 МСК
     moscow_tz = pytz.timezone("Europe/Moscow")
-    reminder_time = time(19, 34, tzinfo=moscow_tz)
+    reminder_time = time(21, 10, tzinfo=moscow_tz)
     context.job_queue.run_daily(
         end_of_day_reminder,
         reminder_time,
@@ -201,18 +236,19 @@ async def start_work_day(update: Update, context: CallbackContext) -> int:
     logging.info(f"Ежедневное напоминание запланировано для {user_id} на 19:34 МСК")
 
     welcome_message = (
-        f"✅ Бот включён. Теперь вы можете использовать все команды.\n\n"
-        f"{stats_text}\n\n"
-        f"{unclosed_text}"
-        f"Текущий план на день: {daily_plan} задач.\n"
+        "✅ <b>Бот включён!</b> Теперь вы можете использовать все команды.\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"{stats_text}\n"
+        f"{unclosed_text}\n"
+        f"📅 <b>Текущий план на день:</b> {daily_plan} задач.\n"
         f"{motivation_text}"
-        "\nПожалуйста, введите новые задачи на сегодня в формате:\n"
-        "Клиент1, Курс1, Сумма1, Статус оплаты1\n"
-        "Клиент2, Курс2, Сумма2, Статус оплаты2\n"
-        "Или опишите задачи текстом (например, 'Добавить ООО Верба на курс Чёрный за 10000 с оплатой'), "
-        "или напишите 'нет', если новых задач нет."
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📝 <b>Введите новые задачи на сегодня:</b>\n"
+        "• В формате: <code>Клиент1, Курс1, Сумма1, Статус оплаты1</code>\n"
+        "• Или опишите текстом (например, 'Добавить ООО Верба на курс Чёрный за 10000 с оплатой'),\n"
+        "• Или напишите <code>'нет'</code>, если новых задач нет."
     )
-    await update.message.reply_text(welcome_message)
+    await update.message.reply_text(welcome_message, parse_mode="HTML")
     return ADD_TASKS
 
 
@@ -230,7 +266,12 @@ async def process_new_tasks(update: Update, context: CallbackContext) -> int:
     new_tasks = []
 
     if message_text.lower() == "нет":
-        await update.message.reply_text(f"Новых задач не добавлено. План на день остаётся: {context.user_data['daily_plan']} задач.")
+        await update.message.reply_text(
+            f"✅ <b>Новых задач не добавлено.</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📅 <b>План на день остаётся:</b> {context.user_data['daily_plan']} задач.",
+            parse_mode="HTML"
+        )
         return ConversationHandler.END
 
     # Проверяем, соответствует ли ввод строгому формату
@@ -310,7 +351,8 @@ async def process_new_tasks(update: Update, context: CallbackContext) -> int:
                 new_tasks.append(row_data)
         except (json.JSONDecodeError, AttributeError) as e:
             await update.message.reply_text(
-                "Ошибка: не удалось распознать задачи из текста. Попробуйте ещё раз в правильном формате."
+                "❌ <b>Ошибка:</b> не удалось распознать задачи из текста. Попробуйте ещё раз в правильном формате.",
+                parse_mode="HTML"
             )
             logging.error(f"Ошибка парсинга LLM ответа: {str(e)}")
             return ADD_TASKS
@@ -320,12 +362,16 @@ async def process_new_tasks(update: Update, context: CallbackContext) -> int:
     context.user_data["daily_plan"] += new_tasks_count
 
     # Формируем подтверждение
-    confirmation = f"Добавлено {new_tasks_count} новых задач:\n"
+    confirmation = (
+        "✅ <b>Задачи успешно добавлены!</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"📋 <b>Добавлено {new_tasks_count} новых задач:</b>\n"
+    )
     for task in new_tasks:
-        confirmation += f"- {task[0]} | {task[1]} | {task[2]} | Оплата: {task[3]}\n"
-    confirmation += f"Обновлённый план на день: {context.user_data['daily_plan']} задач."
+        confirmation += f"• {task[0]} | {task[1]} | {task[2]} | Оплата: {task[3]}\n"
+    confirmation += f"📅 <b>Обновлённый план на день:</b> {context.user_data['daily_plan']} задач."
 
-    await update.message.reply_text(confirmation)
+    await update.message.reply_text(confirmation, parse_mode="HTML")
     return ConversationHandler.END
 
 
@@ -333,16 +379,23 @@ async def finish_work_day(update: Update, context: CallbackContext) -> int:
     user_id = update.effective_user.id
     role = role_manager.get_role(user_id)
     if not role:
-        await update.message.reply_text("Вы не зарегистрированы. Обратитесь к директору.")
+        await update.message.reply_text(
+            "🚫 <b>Вы не зарегистрированы.</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "Обратитесь к директору для регистрации.",
+            parse_mode="HTML"
+        )
         return ConversationHandler.END
 
     if not role_manager.is_active(user_id):
-        await update.message.reply_text("Бот уже отключён для вас.")
+        await update.message.reply_text(
+            "⚠️ <b>Бот уже отключён для вас.</b>",
+            parse_mode="HTML"
+        )
         return ConversationHandler.END
 
     # Принудительно завершаем любой предыдущий диалог
     if context.user_data.get("conversation_state"):
-        await update.message.reply_text("Завершаю предыдущий диалог перед завершением дня.")
         context.user_data["conversation_state"] = None
 
     if role_manager.is_manager(user_id):
@@ -371,13 +424,22 @@ async def finish_work_day(update: Update, context: CallbackContext) -> int:
         context.user_data["deleted_count"] = deleted_count
 
         await update.message.reply_text(
-            "✅ Подтверждённые заказы удалены из таблицы.\n"
-            "Пожалуйста, напишите краткий фидбек по рабочему дню: что получилось, что не получилось."
+            "✅ <b>Подтверждённые заказы удалены из таблицы!</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📝 <b>Пожалуйста, напишите краткий фидбек по рабочему дню:</b>\n"
+            "• Что получилось,\n"
+            "• Что не получилось.",
+            parse_mode="HTML"
         )
         return FEEDBACK
 
     role_manager.set_active(user_id, False)
-    await update.message.reply_text("✅ Бот отключён. До завтра!")
+    await update.message.reply_text(
+        "✅ <b>Бот отключён!</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "🌙 До завтра!",
+        parse_mode="HTML"
+    )
     return ConversationHandler.END
 
 
@@ -391,16 +453,19 @@ async def process_feedback(update: Update, context: CallbackContext) -> int:
     unclosed_count = context.user_data["unclosed_count"]
     deleted_count = context.user_data["deleted_count"]
 
-    summary = f"Сводка по менеджеру {manager_id} за сегодня:\n"
-    summary += f"Закрыто сделок: {closed_count}\n"
+    summary = (
+        "📊 <b>Сводка по менеджеру {}</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "✅ <b>Закрыто сделок:</b> {}\n"
+    ).format(manager_id, closed_count)
     if closed_count > 0:
-        summary += "Подробности закрытых сделок:\n"
+        summary += "📋 <b>Подробности закрытых сделок:</b>\n"
         for stat in today_stats:
             client_name, course, contract_amount, timestamp = stat
-            summary += f"- {client_name} | {course} | {contract_amount} | {timestamp}\n"
-    summary += f"Незакрытых сделок: {unclosed_count}\n"
-    summary += f"Удалено подтверждённых записей из таблицы: {deleted_count}\n"
-    summary += f"Фидбек менеджера:\n{feedback}"
+            summary += f"• {client_name} | {course} | {contract_amount} | {timestamp}\n"
+    summary += f"⚠️ <b>Незакрытых сделок:</b> {unclosed_count}\n"
+    summary += f"🗑️ <b>Удалено подтверждённых записей из таблицы:</b> {deleted_count}\n"
+    summary += f"📝 <b>Фидбек менеджера:</b>\n{feedback}"
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
@@ -408,12 +473,17 @@ async def process_feedback(update: Update, context: CallbackContext) -> int:
         director_id = cursor.fetchone()
         if director_id:
             director_id = director_id[0]
-            await context.bot.send_message(chat_id=director_id, text=summary)
+            await context.bot.send_message(chat_id=director_id, text=summary, parse_mode="HTML")
         else:
             logging.warning("Директор не найден в базе данных.")
 
     role_manager.set_active(user_id, False)
-    await update.message.reply_text("✅ Бот отключён. Спасибо за фидбек! До завтра!")
+    await update.message.reply_text(
+        "✅ <b>Бот отключён!</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "🌟 <b>Спасибо за фидбек!</b> До завтра!",
+        parse_mode="HTML"
+    )
     return ConversationHandler.END
 
 

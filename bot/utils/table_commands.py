@@ -42,10 +42,24 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     course=row_data[1],
                     contract_amount=row_data[2]
                 )
-                result = f"✅ Добавлена строка: {row_data}\n✅ Заказ подтверждён и добавлен в статистику!"
+                result = (
+                    "✅ <b>Добавлена строка:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"{row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]}\n"
+                    "✅ <b>Заказ подтверждён и добавлен в статистику!</b>"
+                )
             else:
-                result = f"✅ Добавлена строка: {row_data}"
-            notification = f"Менеджер {manager_id} добавил строку в таблицу {spreadsheet_name}: {row_data}"
+                result = (
+                    "✅ <b>Добавлена строка:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"{row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]}"
+                )
+            notification = (
+                "📝 <b>Уведомление:</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Менеджер <b>{manager_id}</b> добавил строку в таблицу <b>{spreadsheet_name}</b>:\n"
+                f"{row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]}"
+            )
 
         elif cmd == TableCommands.UPDATE_CELL:
             client = params.get("клиент", "")
@@ -54,11 +68,19 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
 
             row_index = sheet_manager.find_row(client)
             if not row_index:
-                return f"❌ Клиент {client} не найден"
+                return (
+                    "❌ <b>Ошибка:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"Клиент <b>{client}</b> не найден."
+                )
 
             column_index = {"курс": 2, "сумма": 3, "статус оплаты": 4, "Подтверждён ли заказ?": 5}.get(column)
             if not column_index:
-                return f"❌ Неизвестный столбец: {column}"
+                return (
+                    "❌ <b>Ошибка:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"Неизвестный столбец: <b>{column}</b>"
+                )
 
             old_value = sheet_manager.read_cell(row_index, column_index)
             sheet_manager.update_cell(row_index, column_index, value)
@@ -71,7 +93,13 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     course=row_data[1],
                     contract_amount=row_data[2]
                 )
-                result = f"✅ Обновлена ячейка ({row_index}, {column}) для клиента {client}: {value}\n✅ Заказ подтверждён и добавлен в статистику!"
+                result = (
+                    "✅ <b>Ячейка обновлена:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"Клиент: <b>{client}</b> (строка {row_index}, столбец '{column}'):\n"
+                    f"Новое значение: <b>{value}</b>\n"
+                    "✅ <b>Заказ подтверждён и добавлен в статистику!</b>"
+                )
 
                 # Проверяем прогресс выполнения плана
                 if context and bot:
@@ -79,24 +107,34 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     daily_plan = context.user_data.get("daily_plan", 10)
                     progress = context.user_data["completed_today"] / daily_plan
                     last_milestone = context.user_data.get("last_milestone", 0)
-                    current_milestone = int(progress * 5) / 5  # Округляем до ближайшего 20% (0.2, 0.4, 0.6, 0.8, 1.0)
+                    current_milestone = int(progress * 5) / 5
 
                     if current_milestone > last_milestone and current_milestone <= 1.0:
                         motivation_messages = [
-                            "Отлично, 20% плана в кармане! Ты на верном пути!",
-                            "Уже 40% — ты как ракета, набираешь высоту!",
-                            "60% позади, ты неудержим! Продолжай в том же духе!",
-                            "80% плана выполнено — финишная прямая, ты почти чемпион!",
-                            "100% — план выполнен! Ты настоящий герой дня!"
+                            "🎉 Отлично, 20% плана в кармане! Ты на верном пути!",
+                            "🚀 Уже 40% — ты как ракета, набираешь высоту!",
+                            "💪 60% позади, ты неудержим! Продолжай в том же духе!",
+                            "🏁 80% плана выполнено — финишная прямая, ты почти чемпион!",
+                            "🏆 100% — план выполнен! Ты настоящий герой дня!"
                         ]
-                        milestone_index = int(current_milestone * 5) - 1  # 0.2 -> 0, 0.4 -> 1, и т.д.
+                        milestone_index = int(current_milestone * 5) - 1
                         motivation_text = motivation_messages[milestone_index]
-                        await bot.send_message(chat_id=manager_id, text=motivation_text)
+                        await bot.send_message(chat_id=manager_id, text=motivation_text, parse_mode="HTML")
                         context.user_data["last_milestone"] = current_milestone
 
             else:
-                result = f"✅ Обновлена ячейка ({row_index}, {column}) для клиента {client}: {value}"
-            notification = f"Менеджер {manager_id} обновил ячейку в таблице {spreadsheet_name}: клиент {client}, столбец '{column}' с '{old_value}' на '{value}'"
+                result = (
+                    "✅ <b>Ячейка обновлена:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"Клиент: <b>{client}</b> (строка {row_index}, столбец '{column}'):\n"
+                    f"Новое значение: <b>{value}</b>"
+                )
+            notification = (
+                "📝 <b>Уведомление:</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Менеджер <b>{manager_id}</b> обновил ячейку в таблице <b>{spreadsheet_name}</b>:\n"
+                f"Клиент: <b>{client}</b>, столбец '{column}' с '{old_value}' на '{value}'"
+            )
 
         elif cmd == TableCommands.DELETE_ROW:
             client = params.get("клиент", "")
@@ -104,14 +142,31 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
 
             row_index = sheet_manager.find_row(client, course)
             if not row_index:
-                return f"❌ Клиент {client} с курсом {course} не найден"
+                return (
+                    "❌ <b>Ошибка:</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"Клиент <b>{client}</b> с курсом <b>{course}</b> не найден."
+                )
 
             sheet_manager.delete_row(row_index)
-            result = f"✅ Удалена строка {row_index} для клиента {client}, курс {course}"
-            notification = f"Менеджер {manager_id} удалил строку из таблицы {spreadsheet_name}: клиент {client}, курс {course}"
+            result = (
+                "✅ <b>Строка удалена:</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Строка <b>{row_index}</b> (Клиент: <b>{client}</b>, Курс: <b>{course}</b>)"
+            )
+            notification = (
+                "🗑️ <b>Уведомление:</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Менеджер <b>{manager_id}</b> удалил строку из таблицы <b>{spreadsheet_name}</b>:\n"
+                f"Клиент: <b>{client}</b>, Курс: <b>{course}</b>"
+            )
 
         else:
-            return f"❌ Неизвестная команда: {cmd}"
+            return (
+                "❌ <b>Ошибка:</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Неизвестная команда: <b>{cmd}</b>"
+            )
 
         if bot and notification:
             try:
@@ -121,7 +176,7 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     director_id = cursor.fetchone()
                     if director_id:
                         director_id = director_id[0]
-                        await bot.send_message(chat_id=director_id, text=notification)
+                        await bot.send_message(chat_id=director_id, text=notification, parse_mode="HTML")
             except Exception as e:
                 logging.error(f"Ошибка при отправке уведомления директору: {str(e)}", exc_info=True)
 
@@ -129,4 +184,8 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
 
     except Exception as e:
         logging.error(f"Ошибка выполнения команды: {str(e)}", exc_info=True)
-        return f"❌ Ошибка выполнения команды: {str(e)}"
+        return (
+            "❌ <b>Ошибка выполнения команды:</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"{str(e)}"
+        )

@@ -86,7 +86,7 @@ async def get_plan(update: Update, context: CallbackContext) -> int:
         context.user_data["manager_id"],
         bot=context.bot  # Передаём объект bot
     )
-    await update.message.reply_text(result)
+    await update.message.reply_text(result, parse_mode="HTML")  # Добавляем parse_mode="HTML"
     return ConversationHandler.END
 
 

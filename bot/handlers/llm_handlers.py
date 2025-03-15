@@ -40,5 +40,5 @@ async def process_llm_instruction(update: Update, context: CallbackContext) -> i
         return LLM_ADD
 
     results = [await execute_command(cmd, context.user_data["spreadsheet_name"], context.user_data["manager_id"], bot=context.bot, context=context) for cmd in commands]
-    await update.message.reply_text("\n".join(results))
+    await update.message.reply_text("\n".join(results), parse_mode="HTML")  # Добавлен parse_mode="HTML"
     return ConversationHandler.END
