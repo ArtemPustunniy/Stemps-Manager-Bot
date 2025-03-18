@@ -4,8 +4,9 @@ from bot.utils.stats_manager import stats_manager
 import sqlite3
 import logging
 
-# Настройка логирования
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class TableCommands:
@@ -14,7 +15,9 @@ class TableCommands:
     DELETE_ROW = "delete_row"
 
 
-async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int, bot=None, context=None) -> str:
+async def execute_command(
+    command: Dict, spreadsheet_name: str, manager_id: int, bot=None, context=None
+) -> str:
     sheet_manager = GoogleSheetManager(spreadsheet_name)
 
     try:
@@ -31,7 +34,7 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                 params.get("сумма", ""),
                 params.get("статус оплаты", ""),
                 params.get("Подтверждён ли заказ?", ""),
-                "bot"
+                "bot",
             ]
             logging.info(f"Добавление строки: {row_data}")
             sheet_manager.add_row(row_data)
@@ -40,7 +43,7 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     manager_id=manager_id,
                     client_name=row_data[0],
                     course=row_data[1],
-                    contract_amount=row_data[2]
+                    contract_amount=row_data[2],
                 )
                 result = (
                     "✅ <b>Добавлена строка:</b>\n"
@@ -74,7 +77,12 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     f"Клиент <b>{client}</b> не найден."
                 )
 
-            column_index = {"курс": 2, "сумма": 3, "статус оплаты": 4, "Подтверждён ли заказ?": 5}.get(column)
+            column_index = {
+                "курс": 2,
+                "сумма": 3,
+                "статус оплаты": 4,
+                "Подтверждён ли заказ?": 5,
+            }.get(column)
             if not column_index:
                 return (
                     "❌ <b>Ошибка:</b>\n"
@@ -85,13 +93,17 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
             old_value = sheet_manager.read_cell(row_index, column_index)
             sheet_manager.update_cell(row_index, column_index, value)
 
-            if column == "Подтверждён ли заказ?" and value.lower() == "да" and old_value.lower() != "да":
+            if (
+                column == "Подтверждён ли заказ?"
+                and value.lower() == "да"
+                and old_value.lower() != "да"
+            ):
                 row_data = sheet_manager.sheet.row_values(row_index)
                 stats_manager.add_closed_order(
                     manager_id=manager_id,
                     client_name=row_data[0],
                     course=row_data[1],
-                    contract_amount=row_data[2]
+                    contract_amount=row_data[2],
                 )
                 result = (
                     "✅ <b>Ячейка обновлена:</b>\n"
@@ -101,9 +113,10 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                     "✅ <b>Заказ подтверждён и добавлен в статистику!</b>"
                 )
 
-                # Проверяем прогресс выполнения плана
                 if context and bot:
-                    context.user_data["completed_today"] = context.user_data.get("completed_today", 0) + 1
+                    context.user_data["completed_today"] = (
+                        context.user_data.get("completed_today", 0) + 1
+                    )
                     daily_plan = context.user_data.get("daily_plan", 10)
                     progress = context.user_data["completed_today"] / daily_plan
                     last_milestone = context.user_data.get("last_milestone", 0)
@@ -115,11 +128,13 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
                             "🚀 Уже 40% — ты как ракета, набираешь высоту!",
                             "💪 60% позади, ты неудержим! Продолжай в том же духе!",
                             "🏁 80% плана выполнено — финишная прямая, ты почти чемпион!",
-                            "🏆 100% — план выполнен! Ты настоящий герой дня!"
+                            "🏆 100% — план выполнен! Ты настоящий герой дня!",
                         ]
                         milestone_index = int(current_milestone * 5) - 1
                         motivation_text = motivation_messages[milestone_index]
-                        await bot.send_message(chat_id=manager_id, text=motivation_text, parse_mode="HTML")
+                        await bot.send_message(
+                            chat_id=manager_id, text=motivation_text, parse_mode="HTML"
+                        )
                         context.user_data["last_milestone"] = current_milestone
 
             else:
@@ -172,13 +187,20 @@ async def execute_command(command: Dict, spreadsheet_name: str, manager_id: int,
             try:
                 with sqlite3.connect("users.db") as conn:
                     cursor = conn.cursor()
-                    cursor.execute("SELECT telegram_id FROM users WHERE role = 'director' LIMIT 1")
+                    cursor.execute(
+                        "SELECT telegram_id FROM users WHERE role = 'director' LIMIT 1"
+                    )
                     director_id = cursor.fetchone()
                     if director_id:
                         director_id = director_id[0]
-                        await bot.send_message(chat_id=director_id, text=notification, parse_mode="HTML")
+                        await bot.send_message(
+                            chat_id=director_id, text=notification, parse_mode="HTML"
+                        )
             except Exception as e:
-                logging.error(f"Ошибка при отправке уведомления директору: {str(e)}", exc_info=True)
+                logging.error(
+                    f"Ошибка при отправке уведомления директору: {str(e)}",
+                    exc_info=True,
+                )
 
         return result
 

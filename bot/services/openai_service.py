@@ -54,11 +54,14 @@ async def get_commands_from_llm(instruction: str) -> List[Dict]:
         response = await openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "Ты помощник, преобразующий текст в JSON-команды."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "Ты помощник, преобразующий текст в JSON-команды.",
+                },
+                {"role": "user", "content": prompt},
             ],
             max_tokens=500,
-            temperature=0.0
+            temperature=0.0,
         )
 
         commands_text = response.choices[0].message.content.strip()

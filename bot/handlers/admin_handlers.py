@@ -12,7 +12,7 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
             "⚠️ <b>Бот отключён для вас.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Включите его командой <code>/start_work_day</code>.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
@@ -21,7 +21,7 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
             "🚫 <b>Доступ запрещён.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Эта команда доступна только директору.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
@@ -33,7 +33,7 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 "<b>Использование:</b> <code>/manage_users &lt;telegram_id&gt; &lt;role&gt;</code>\n"
                 "<b>Роли:</b> director, manager",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             return
 
@@ -44,7 +44,7 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
                 "❌ <b>Неверная роль.</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 "<b>Доступные роли:</b> director, manager",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             return
 
@@ -53,12 +53,11 @@ async def manage_users(update: Update, context: CallbackContext) -> None:
             "✅ <b>Пользователь успешно добавлен!</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"Пользователь <b>{target_id}</b> добавлен с ролью <b>{role}</b>.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
     except ValueError:
         await update.message.reply_text(
-            "❌ <b>Ошибка:</b> Telegram ID должен быть числом.",
-            parse_mode="HTML"
+            "❌ <b>Ошибка:</b> Telegram ID должен быть числом.", parse_mode="HTML"
         )
 
 
@@ -69,7 +68,7 @@ async def stats(update: Update, context: CallbackContext) -> None:
             "⚠️ <b>Бот отключён для вас.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Включите его командой <code>/start_work_day</code>.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
@@ -78,7 +77,7 @@ async def stats(update: Update, context: CallbackContext) -> None:
             "🚫 <b>Доступ запрещён.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Эта команда доступна только директору.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
@@ -89,7 +88,7 @@ async def stats(update: Update, context: CallbackContext) -> None:
                 "❌ <b>Неверный формат команды.</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 "<b>Использование:</b> <code>/stats <telegram_id></code>",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             return
 
@@ -99,7 +98,7 @@ async def stats(update: Update, context: CallbackContext) -> None:
                 "⚠️ <b>Ошибка:</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"Пользователь <b>{manager_id}</b> не является менеджером.",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             return
 
@@ -109,24 +108,25 @@ async def stats(update: Update, context: CallbackContext) -> None:
                 "ℹ️ <b>Информация:</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"Менеджер <b>{manager_id}</b> пока не закрыл ни одного заказа.",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             return
 
         response = (
-            "📊 <b>Статистика менеджера {}</b>\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📊 <b>Статистика менеджера {}</b>\n" "━━━━━━━━━━━━━━━━━━━━━━━\n"
         ).format(manager_id)
         for order in orders:
             client_name, course, contract_amount, timestamp = order
-            response += f"• {client_name} | {course} | {contract_amount} | {timestamp}\n"
+            response += (
+                f"• {client_name} | {course} | {contract_amount} | {timestamp}\n"
+            )
         await update.message.reply_text(response, parse_mode="HTML")
     except ValueError:
         await update.message.reply_text(
             "❌ <b>Ошибка:</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Telegram ID должен быть числом.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
 
 
@@ -141,7 +141,7 @@ async def today_revenue(update: Update, context: CallbackContext) -> None:
             "⚠️ <b>Бот отключён для вас.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Включите его командой <code>/start_work_day</code>.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
@@ -150,11 +150,10 @@ async def today_revenue(update: Update, context: CallbackContext) -> None:
             "🚫 <b>Доступ запрещён.</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Эта команда доступна только директору.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
-    # Получаем выручку за сегодня для всех менеджеров
     revenue_data = stats_manager.get_today_revenue_by_managers()
 
     if not revenue_data:
@@ -162,14 +161,11 @@ async def today_revenue(update: Update, context: CallbackContext) -> None:
             "ℹ️ <b>Информация:</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
             "Сегодня ни один менеджер не закрыл заказов.",
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return
 
-    response = (
-        "💰 <b>Выручка менеджеров за сегодня:</b>\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━\n"
-    )
+    response = "💰 <b>Выручка менеджеров за сегодня:</b>\n" "━━━━━━━━━━━━━━━━━━━━━━━\n"
     total_revenue = 0.0
     for manager_id, revenue in revenue_data.items():
         response += f"• Менеджер {manager_id}: <b>{revenue:.2f}</b>\n"
