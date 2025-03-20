@@ -187,12 +187,10 @@ async def execute_command(
             try:
                 with sqlite3.connect("users.db") as conn:
                     cursor = conn.cursor()
-                    cursor.execute(
-                        "SELECT telegram_id FROM users WHERE role = 'director' LIMIT 1"
-                    )
-                    director_id = cursor.fetchone()
-                    if director_id:
-                        director_id = director_id[0]
+                    cursor.execute("SELECT telegram_id FROM users WHERE role = 'director'")
+                    directors = cursor.fetchall()
+                    for director in directors:
+                        director_id = director[0]
                         await bot.send_message(
                             chat_id=director_id, text=notification, parse_mode="HTML"
                         )

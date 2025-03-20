@@ -35,15 +35,19 @@ async def process_feedback(update: Update, context: CallbackContext) -> int:
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT telegram_id FROM users WHERE role = 'director' LIMIT 1")
-        director_id = cursor.fetchone()
-        if director_id:
-            director_id = director_id[0]
-            await context.bot.send_message(
-                chat_id=director_id, text=summary, parse_mode="HTML"
-            )
+        cursor.execute("SELECT telegram_id FROM users WHERE role = 'director'")
+        directors = cursor.fetchall()
+        if directors:
+            for director in directors:
+                director_id = director[0]
+                try:
+                    await context.bot.send_message(
+                        chat_id=director_id, text=summary, parse_mode="HTML"
+                    )
+                except Exception as e:
+                    logging.error(f"Ошибка отправки сообщения директору {director_id}: {e}")
         else:
-            logging.warning("Директор не найден в базе данных.")
+            logging.warning("Директора не найдены в базе данных.")
 
     role_manager.set_active(user_id, False)
     await update.message.reply_text(
