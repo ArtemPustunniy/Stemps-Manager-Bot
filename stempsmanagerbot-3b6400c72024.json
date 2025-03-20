@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "stempsmanagerbot",
+  "private_key_id": "3b6400c720246941fd07ee0ff79398ed9dcafc4a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDLhDW7kMfSmXSN\nVsmTHDvkvfzlHZ7pWw02ZVEXVhlI3R6kunAL0UboDyCGpXPolT4y8GGDtVfGnB1S\naRprPfwkBYrdzXlUrokrROWT9OuSOJ+xlHLwtuhaJpUrXALPFXg/0FHcmWZdAXLL\nQz0xlE9Gmuf9K+l0ZasykBhGP1YGrMfRXbfbFmHFB5t27UIy91q9WZRDSoi47fPt\n59Zt8Qt1qOOE+3JHd/PqoWXxHy/vCnIR1cCCGJQYzVKlIXp8u1I2BJNczA0qyyH8\n9w2QAkckEtwlc2PULvLktDnWFpioTPDZx80djf7gvy0Ypi575Jlodq/DH93pcy/K\nPieu7tAPAgMBAAECggEAUPojmSST5Z+KiRxxqzeuOyc/Q3jEPKyudqjcmbD38Y6N\n/VRzdbhJAtfWBM07b91GOOV9n3bd3JhMcHiCew5YT4rnBLcXolKqII3S3Uq0GuOt\n4u4ix9W3YPt+GhkLwxMTXCzLDb/5w2Lqpqbz59DPtFO5n/pDcz1q330HM5hK5e9O\nS2AULSwewUhOvtlWBqCbe6moOSB9+utvlZ2mURsUdb/hxXhatTEXWuchohJdxQzq\naoJXPTOPkJvB8RIF8u93OyALGe0zSlNXrxRsmW/OzZKaFdRoDKrKKctI+S1r0D52\n+kX+OH6RB3k7zooBukiv5GTssXdJ5VV4QUZvOU1NkQKBgQD6c2uHoYvmR1Vz1OQT\nuGFGX7MEqzIg5PFjUaPv+KR8BbLPogBnTtrzZGhSkzSI+tTGld6SkT4Jv40fMwU+\nzq6xxBEyvscM6ee7mR4UGHCKiAaXEA2UfYrug6EpdNblpoT8TrN6Tg0HQMOYR2Kz\nnLDpYNf7soIpLco5gvCbgdad/wKBgQDQBpLXsfEh6M08SDPAHk66AAgiyBmDjYsp\nIYhId2VkdsQjFI+/iOjTREpRv6rK2gKspLbpxjMZcYfXjEiRVgEFZm1saHkjHANo\nuO7JZK1G2QJaVW+RyI/Vn6Z2dc/nup4s+broaT/LjMcPo3uLNHh6+zo5B/PVkNGa\nyfvPGmHt8QKBgQDK6UJgg+DdtEOmcgBLfeHJ63UVvkIB5psvtZBVtyREmzVRBda/\n3GKGOX5QEJXKuTY0om3OX8Bck4YZlfOU/E0LF2g7rdeFPekS065L57Ued7CnKUln\nWgN61Mh41wHY0/4AkR7WY3AoxS7zLDrqfHPU0TKL6QeNp1ylFdIsm5gvLwKBgD7O\nrUk4bXBqhIS92/oWbHiWB97QgXuJocmCWU5f1hoWDbP1wkz2/izDQpkaAGwMlKAh\nfyRn9gepknUO4t4WlGpX+ZOwm1pxW8ojg90Ea5inbqFtiCkA4ASEllLP0TzKyHUV\n1UvUczF2yKc9GdD2v6WJ8pNDhmgluFM+xqtJ8OVRAoGBAJIPQ5ICgY/StYp1EM3f\nKiAo/KFJSyJDNHjotAexEfXl0vH1SSWqIDumFGdJjV5gSHQCgrqXIbxiFKV6Z853\n+0uOMIqMwuIQAaY6/+oFL7vrdM2vvvFGxLXKdap7ve3wsA3TAPoDZSSga4zStquU\nXDmtGOvKaYRIoNbYpGPxWYZR\n-----END PRIVATE KEY-----\n",
+  "client_email": "artem-admin@stempsmanagerbot.iam.gserviceaccount.com",
+  "client_id": "116697540949172490916",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/artem-admin%40stempsmanagerbot.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
